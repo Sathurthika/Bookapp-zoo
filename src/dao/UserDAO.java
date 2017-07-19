@@ -4,21 +4,21 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import org.springframework.jdbc.core.JdbcTemplate;
+
 import model.User;
 import util.ConnectionUtil;
 
 public class UserDAO {
-	
+	private JdbcTemplate jdbctemplate=ConnectionUtil.getJdbcTemplate();
+
 	
 	public void register(User user) throws Exception {
         String sql = "insert into users ( name, email, password) values ( ?, ? ,? )";
-        Connection con= ConnectionUtil.getConnection();
-        PreparedStatement pst=con.prepareStatement(sql);
-        		pst.setString(1, user.getName());
-	        	pst.setString(2, user.getEmail());
-        		pst.setString(3, user.getPassword());
-          int rows=pst.executeUpdate(); 
-          System.out.println(rows);
+		Object[] params={ user.getName(),user.getEmail(),user.getPassword()};
+
+		int rows = jdbctemplate.update(sql,params);        
+		System.out.println(rows);
 
         System.out.println("UserDAO-> register: " + user);
     

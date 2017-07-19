@@ -7,21 +7,20 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.jdbc.core.JdbcTemplate;
+
 import model.Order;
 import util.ConnectionUtil;
 
 public class OrderDAO {
+	private JdbcTemplate jdbctemplate=ConnectionUtil.getJdbcTemplate();
+
 	public void register(Order user) throws Exception {
 		String sql = "insert into orders(user_id,book_id,quantity) values (?, ?, ? )";
-		Connection con = ConnectionUtil.getConnection();
-		PreparedStatement pst = con.prepareStatement(sql);
-		pst.setInt(1, user.getUserid());
-		pst.setInt(2, user.getBookid());
-		pst.setInt(3, user.getQuantity());
-		// pst.setString(4,user.getStatus());
-		// pst.setDate(5, Date.valueOf(user.getOrderDate()));
+		
+		Object[] params={ user.getUserid(),user.getBookid(),user.getQuantity()};
 
-		int rows = pst.executeUpdate();
+		int rows = jdbctemplate.update(sql,params);        
 		System.out.println(rows);
 
 		System.out.println("OrderDAO-> register: " + user);

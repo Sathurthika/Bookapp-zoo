@@ -6,22 +6,20 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.jdbc.core.JdbcTemplate;
+
 import model.Book;
 import util.ConnectionUtil;
 
 public class BookDAO {
+	private JdbcTemplate jdbctemplate=ConnectionUtil.getJdbcTemplate();
 	public void register(Book user) throws Exception {
 		String sql = "insert into books(name,price,published_date,author_id) values (?, ?, ? ,? )";
-		Connection con = ConnectionUtil.getConnection();
-		PreparedStatement pst = con.prepareStatement(sql);
-		pst.setString(1, user.getName());
-		pst.setInt(2, user.getPrice());
-		pst.setDate(3, Date.valueOf(user.getPublishedDate()));
-		pst.setInt(4, user.getAuthorId());
-		int rows = pst.executeUpdate();
-		System.out.println(rows);
 
-		System.out.println("BookDAO-> register: " + user);
+		Object[] params={ user.getName(),user.getPrice(),Date.valueOf(user.getPublishedDate()),user.getAuthorId()};
+		int rows = jdbctemplate.update(sql,params);
+		System.out.println(rows);
 	}
 
 	public List<Book> listbook() throws Exception {
