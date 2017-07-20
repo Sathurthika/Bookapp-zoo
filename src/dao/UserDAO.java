@@ -25,28 +25,24 @@ public class UserDAO {
 	}
 	 public User login(String email, String password) throws Exception {
 	        String sql = "select id,name,email,password from users where email = ? and password = ? ";
-	        Connection con=ConnectionUtil.getConnection();
-	        PreparedStatement pst=con.prepareStatement(sql);
-	        pst.setString(1, email);
-        	pst.setString(2, password);       
-    		User user = null;
-    		ResultSet rs=pst.executeQuery();
-    		if(rs.next()){
+            Object[] params={email,password};
+            User list =jdbctemplate.queryForObject(sql, params,(rs,rowNum) ->{
+
     			int id=rs.getInt("id");
     			String name=rs.getString("name");
     			String email1=rs.getString("email");
     			String password1=rs.getString("password");
     			
-    			user=new User();
-    			user.setId(id);
-    			user.setName(name);
-    			user.setEmail(email1);
-    			user.setPassword(password1);
-
-    		}
-	        System.out.println(user);
+    			User u=new User();
+    			u.setId(id);
+    			u.setName(name);
+    			u.setEmail(email1);
+    			u.setPassword(password1);
+return u;
+    		});
+	        System.out.println(list);
 	 
-	        return user;
+	        return list;
 	 
 	    }
 	}

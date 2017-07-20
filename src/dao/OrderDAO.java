@@ -28,26 +28,17 @@ public class OrderDAO {
 
 	public void updateStatus(int orderId, String status) throws Exception {
 		String sql = "update orders set status = ? where id = ? ";
-		Connection con = ConnectionUtil.getConnection();
-		PreparedStatement pst = con.prepareStatement(sql);
-		pst.setString(1, status);
-		pst.setInt(2, orderId);
 
-		int rows = pst.executeUpdate();
-		System.out.println(rows);
+		int rows = jdbctemplate.update(sql,status, orderId);
 
 		System.out.println("OrderDAO-> updateStatus - no of rows updated" + rows);
 	}
 
 	public List<Order> listorder() throws Exception {
-		Connection con = ConnectionUtil.getConnection();
 		// String sql="select id,user_id,book_id,quantity,status,order_date from
 		// orders";
 		String sql = " select  o.id,o.user_id,o.book_id,o.quantity,o.status,o.order_date , u.name as username,b.name as bookname,b.price from orders o,users u,books b where o.user_id=u.id and o.book_id=b.id";
-		PreparedStatement pst = con.prepareStatement(sql);
-		List<Order> orderList = new ArrayList<Order>();
-		ResultSet rs = pst.executeQuery();
-		while (rs.next()) {
+		List<Order> orderList = jdbctemplate.query(sql, (rs,rowNo) ->{
 
 			int id = rs.getInt("id");
 			int userid = rs.getInt("user_id");
@@ -67,8 +58,8 @@ public class OrderDAO {
 			b.setStatus(status);
 			b.setBookname(bookname);
 			b.setUsername(username);
-			orderList.add(b);
-		}
+return b;
+});
 		System.out.println(orderList);
 		for (Order b : orderList) {
 			System.out.println(b);
@@ -78,16 +69,13 @@ public class OrderDAO {
 	}
 
 	public List<Order> listorder(int userId) throws Exception {
-		Connection con = ConnectionUtil.getConnection();
+		JdbcTemplate con = ConnectionUtil.getJdbcTemplate();
 		// String sql="select id,user_id,book_id,quantity,status,order_date from
 		// orders";
 		String sql = "  select  o.id,o.user_id,o.book_id,o.quantity,o.status,o.order_date , u.name as username,b.name as bookname,b.price from orders o,users u,books b where o.user_id=u.id and o.book_id=b.id and user_id=?";
+        Object[] params={userId};
 
-		PreparedStatement pst = con.prepareStatement(sql);
-		pst.setInt(1, userId);
-		List<Order> orderList = new ArrayList<Order>();
-		ResultSet rs = pst.executeQuery();
-		while (rs.next()) {
+		List<Order> orderList = jdbctemplate.query(sql,params, (rs,rowNo) ->{
 
 			int id = rs.getInt("id");
 			int userid = rs.getInt("user_id");
@@ -107,8 +95,7 @@ public class OrderDAO {
 			b.setStatus(status);
 			b.setBookname(bookname);
 			b.setUsername(username);
-			orderList.add(b);
-		}
+return b;		});
 		System.out.println(orderList);
 		for (Order b : orderList) {
 			System.out.println(b);

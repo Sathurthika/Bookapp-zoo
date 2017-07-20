@@ -23,13 +23,9 @@ public class BookDAO {
 	}
 
 	public List<Book> listbook() throws Exception {
-		Connection con = ConnectionUtil.getConnection();
 		String sql = "select id,name,price,author_id,published_date from books";
-		PreparedStatement pst = con.prepareStatement(sql);
-		List<Book> bookList = new ArrayList<Book>();
-		ResultSet rs = pst.executeQuery();
-		while (rs.next()) {
-
+		List<Book> bookList=jdbctemplate.query(sql, (rs,rowNo) ->{
+	
 			int id = rs.getInt("id");
 			String name = rs.getString("name");
 			int price = rs.getInt("price");
@@ -42,8 +38,7 @@ public class BookDAO {
 			b.setAuthorId(author_id);
 			b.setPublishedDate(published_date.toLocalDate());
 
-			bookList.add(b);
-		}
+return b;		});
 		System.out.println(bookList);
 		for (Book b : bookList) {
 			System.out.println(b);

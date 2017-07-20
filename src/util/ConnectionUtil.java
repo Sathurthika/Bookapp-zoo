@@ -28,7 +28,7 @@ public class ConnectionUtil {
         return jdbcTemplate;
     }
 	
-	 public static Connection getConnection() throws Exception {
+	/* public static Connection getConnection() throws Exception {
 		 
 	        Connection con = null;
 	 
@@ -42,6 +42,6 @@ public class ConnectionUtil {
 	         
 	        return con;
 	 
-	    }
+	    }*/
 
 }
