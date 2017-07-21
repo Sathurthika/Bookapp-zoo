@@ -7,6 +7,7 @@
 <title>Insert title here</title>
 </head>
 <body>
-hello
+<h3>Welcome to Bookapp</h3>
+<a href="Login.jsp" > Login</a>
 </body>
 </html>
